@@ -1,6 +1,6 @@
 {
   "name": "onenote-e",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "description": "Linux Desktop integration of Onenote using Electron and Webview.",
   "main": "src/main.js",
   "scripts": {
@@ -33,6 +33,7 @@
       "packagerConfig": {
         "icon": "onenote-e-icon.png",
         "email": "charja113@gmail.com",
+        "homepage": "https://github.com/1jamie/onenote-e",
         "name": "OneNote-E",
         "executableName": "onenote-e"
       },
@@ -61,7 +62,7 @@
           "name": "@electron-forge/maker-deb",
           "config": {
             "maintainer": "Jamie Charlton",
-            "homepage": "tbd",
+            "homepage": "https://github.com/1jamie/onenote-e",
             "category": "Office",
             "icon": "onenote-e-icon.png"
           }
@@ -70,7 +71,7 @@
           "name": "@electron-forge/maker-rpm",
           "config": {
             "maintainer": "Jamie Charlton",
-            "homepage": "tbd",
+            "homepage": "https://github.com/1jamie/onenote-e",
             "category": "Office",
             "icon": "onenote-e-icon.png"
           }
