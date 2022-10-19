@@ -1,0 +1,81 @@
+{
+  "name": "onenote-e",
+  "version": "0.0.1",
+  "description": "Linux Desktop integration of Onenote using Electron and Webview.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "start-dev": "electron-forge start ",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "make-win": "electron-forge make -p win32",
+    "make-npxall": "electron-forge make -p win32,linux"
+  },
+  "author": "Jamie Charlton",
+  "license": "N/A",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.66",
+    "@electron-forge/maker-deb": "^6.0.0-beta.66",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.66",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
+    "@electron-forge/maker-zip": "^6.0.0-beta.66",
+    "electron": "^21.0.1"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.8",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.1.0",
+    "index.js": "^0.0.3",
+    "store": "^2.0.12"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "onenote-e-icon.png",
+        "email": "charja113@gmail.com",
+        "name": "OneNote-E",
+        "executableName": "onenote-e"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "onenote-e",
+            "icon": "onenote-e-icon.ico",
+            "applicationId": "com.onenote.electron",
+            "uninstallDisplayName": "OneNote-E",
+            "uninstallIcon": "onenote-e-icon.ico",
+            "setupIcon": "onenote-e-icon.ico",
+            "setupExe": "OneNote-E-SETUP.exe",
+            "certificateFile": "../cert-stuff/self-signs/onenote-e.pfx"
+          }
+        },
+
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "maintainer": "Jamie Charlton",
+            "homepage": "tbd",
+            "category": "Office",
+            "icon": "onenote-e-icon.png"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {
+            "maintainer": "Jamie Charlton",
+            "homepage": "tbd",
+            "category": "Office",
+            "icon": "onenote-e-icon.png"
+          }
+        }
+      ]
+    }
+  }
+}

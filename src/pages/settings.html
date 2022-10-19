@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="../css/settings.css">
+    <script defer src="../scripts/settings.js"></script>
+</head>
+<html>
+
+<body>
+    <div class="settings">
+        <div class="settingsHeader">
+            <h1>Settings</h1>
+        </div>
+        <div class="settingsBody">
+            <div class="settingsSection">
+                <h2>General Settings:</h2>
+                <div class="settingsItem">
+                    <h3>Home Page:</h3>
+                    <input type="text" class="textInput" id="homePage" placeholder="https://onenote.com/notebooks">
+                </div>
+                <div class="settingsItem">
+                    <h3>Server List:</h3>
+                    <input type="text" class="textInput" id="passLst"
+                        placeholder="https://example.com/specific/notebook/url">
+                </div>
+            </div>
+            <div class="settingsSection">
+                <h2>Appearance</h2>
+                <div class="settingsItem">
+                    <input type="checkbox" id="autohide">autohide menu bar </input><p style="font-size: 10px;">*Not Working</p>
+                </div>
+                <div class="settingsItem">
+                    <input type="checkbox" id="noTopbar">no app topbar </input><p style="font-size: 10px;">*Not Working</p>
+                </div>
+            </div>
+            </br>
+            <div class="settingsFooter">
+                <button class="saveBtn" id="saveBtn">Save</button>
+            </div>
+        </div>
+</body>
+
+</html>
