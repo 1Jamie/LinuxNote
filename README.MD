@@ -58,30 +58,16 @@ $ npm run make
 if there are no issues you should now have a /out folder in your app directory. If you go down the rabbit hole to your distribution you should have a deb file or rpm ready to use!
 
 ## Building for Windows
-this one is honestly a huge pain.... 1. you need to have a self signed cert to sign the code with and be in pfx. i barely know windows so..... have fun with doing this on windows? The other two big things are just having mono-complete installed and have wine installed. 
-> quick note: if you look in the package.json you will see a line for a cert file, that is my own storage so you will need yours. If you dont know how to get one of these... i will be hoenst its annoying to find the information so there is a section in the bottom to walk you through this.
+this one is honestly a huge pain....  I had to do it all on windows because doing it from linux the install randomly broke, for the self signed app signing cert look at the bottom of the page. It is marked in the pacakge-win.json as my local one so please make one for yourself and update accordingly.
+sorry this section is short as i am not proficient in this department
 
-So just do the quick prerequisites
-```
-Debian based:
-    $ sudo apt install mono-complete wine
-RHEL based:
-    $ sudo yum install mono-complete wine
-```
-from here we just follow the same steps as linux but a different end command that targets windows
-- clone the repo to your local system 
-```
-$ git clone https://github.com/1jamie/onenote-e.git
-```
-- install the packages (change into the apps directory first please, i feel like this should be a given)
-```
-$ npm install
-```
-- It should be good to go now! Lets make it!
-```
-$ npm run make-win
-```
-Inside the /out folder you should now be able to locate a .exe file that is going to be the app!
+- install git and nodejs
+- clone the repo or download and extract
+- open a powershell or cmd to the folder
+- move package.json somewhere else that isnt here
+- move package-win.json to package.json
+- npm install
+- npm run make-win
 
 ## Sign Key and Cert
 

@@ -151,7 +151,6 @@ ipcMain.on('settings', (event, arg) => {
             }
         })
         settingsWindow.loadURL('file://' + __dirname + '/pages/settings.html')
-        settingsWindow.openDevTools()
         //settingsWindow.openDevTools()
         //deal with closing the window
         settingsWindow.on('closed', () => {

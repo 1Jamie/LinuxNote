@@ -5,7 +5,6 @@
     "main": "src/main.js",
     "scripts": {
         "start": "electron-forge start",
-        "start-dev": "electron-forge start ",
         "package": "electron-forge package",
         "make": "electron-forge make",
         "make-win": "electron-forge make -p win32"
@@ -14,14 +13,11 @@
     "license": "N/A",
     "devDependencies": {
         "@electron-forge/cli": "^6.0.0-beta.66",
-        "@electron-forge/maker-deb": "^6.0.0-beta.66",
-        "@electron-forge/maker-rpm": "^6.0.0-beta.66",
         "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
         "@electron-forge/maker-zip": "^6.0.0-beta.66",
         "electron": "^21.0.1"
     },
     "dependencies": {
-        "@electron/remote": "^2.0.8",
         "electron-squirrel-startup": "^1.0.0",
         "electron-store": "^8.1.0",
         "index.js": "^0.0.3",
@@ -55,25 +51,7 @@
                     "platforms": [
                         "darwin"
                     ]
-                },
-                {
-                    "name": "@electron-forge/maker-deb",
-                    "config": {
-                        "maintainer": "Jamie Charlton",
-                        "homepage": "https://github.com/1jamie/onenote-e",
-                        "category": "Office",
-                        "icon": "onenote-e-icon.png"
-                    }
-                },
-                {
-                    "name": "@electron-forge/maker-rpm",
-                    "config": {
-                        "maintainer": "Jamie Charlton",
-                        "homepage": "https://github.com/1jamie/onenote-e",
-                        "category": "Office",
-                        "icon": "onenote-e-icon.png"
-                    }
-                }
+                } 
             ]
         }
     }
