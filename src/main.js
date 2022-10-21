@@ -107,17 +107,21 @@ function openSettings() {
 
 function resizeBrowserView(minmax) {
     //resize the browser view
-    if (minmax == 'true') {
-        //wait for the window to be ready to resize
-        mainWindow.on('ready-to-show', () => {
+    if (minmax === true) {
+        //create a timeout to wait for the window to be resized before resizing the browser view with it
+        //this is to prevent the browser view from being resized before the window is
+        let timeout = setTimeout(() => {
             //resize the browser view
-            browserView.setBounds({
+            view.setBounds({
                 x: 0,
-                y: 35,
+                y: 0,
                 width: mainWindow.getBounds().width,
-                height: mainWindow.getBounds().height - 35
+                height: mainWindow.getBounds().height-35
             })
-        })
+            //clear the timeout
+            console.log('clearing timeout');
+            clearTimeout(timeout);
+        }, 100);
     } else {
         view.setBounds({
             x: 0,
