@@ -4,7 +4,7 @@
     <!-- <link rel="stylesheet" href="assets/css/no-topbar.css"> -->
     <script defer src="../scripts/renderer.js"></script>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/renderer.css">
 </head>
 
 <body>
@@ -19,16 +19,11 @@
             <h3 class="title-label">OneNote-E</h3>
         </div>
         <div class="windowControls" id="windowControls">
-        <button class="closebutton" id="closeBtn"> ❌ </button>
-        <button class="closebutton" id="minBtn"> 🗕 </button>
-        <button class="closebutton" id="maxBtn"> ◰ </button>
-        <button class="rightbutton" id="settingsBtn"> Settings </button>
+        <button class="settingsbutton" id="settingsBtn">⚙️</button>
+        <button class="closebutton" id="minBtn">🗕</button>
+        <button class="closebutton" id="maxBtn">🗖</button>
+        <button class="closebutton" id="closeBtn">❌</button>
         </div> 
     </div>
     <!-- End topbar -->
-
-    <!-- Webview -->
-    <webview class="webview" id="webview" src="https://onenote.com/notebooks" >
-    </webview>
-
 </html>

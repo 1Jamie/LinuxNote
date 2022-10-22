@@ -1,5 +1,5 @@
 let ipcrenderer = require('electron').ipcRenderer;
-let homepage, passlist, autohide;
+let homepage, passlist, darkMode, tray;
 //this one is hopefully going to be short
 
 //function to send settings to ipcMain
@@ -7,10 +7,11 @@ function sendSettings() {
     //get the settings from the settings page
     homepage = document.getElementById("homePage").value;
     passlist = document.getElementById("passLst").value;
-    autohide = document.getElementById("autohide").checked;
+    darkMode = document.getElementById("darkMode").checked;
+    tray = document.getElementById("tray").checked;
     //send the settings to the main process
-    console.log("sending settings to main process", homepage, passlist, autohide);
-    ipcrenderer.send("settings-page", [homepage, passlist, autohide]);
+    console.log("sending settings to main process", homepage, passlist, darkMode, tray);
+    ipcrenderer.send("settings", [homepage, passlist, darkMode, tray]);
 }
 
 //while we start up lets get the settings from the main process
@@ -22,11 +23,12 @@ ipcrenderer.on("settings", (event, arg) => {
     //set the values of the settings page
     homepage = arg.homepage;
     passlist = arg.passLst;
-    autohide = arg.autoHideMenuBar;
-    console.log("setting settings page values", homepage, passlist, autohide);
+    tray = arg.tray;
+    //console.log("setting settings page values", homepage, passlist, darkMode, tray);
     document.getElementById("homePage").value = homepage;
     document.getElementById("passLst").value = passlist;
-    document.getElementById("autohide").checked = autohide;
+    document.getElementById("darkMode").checked = arg.darkMode;
+    document.getElementById("tray").checked = tray;
 
 });
 
