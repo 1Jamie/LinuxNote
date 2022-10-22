@@ -3,16 +3,19 @@ const {
     BrowserWindow,
     BrowserView,
     ipcMain,
-    ipcRenderer
+    Menu,
+    Tray
 } = require('electron')
 const path = require('path')
 const Store = require('electron-store');
-
 //fix for windows installer
 if (require('electron-squirrel-startup')) return app.quit();
+let settingsWindow = null;
+let mainWindow = null;
+let view = null;
+let tray = null;
 
 //create the store
-const store = new Store();
 
 const schema = {
     homepage: {
@@ -23,15 +26,23 @@ const schema = {
         type: 'string',
         default: 'https://google.com'
     },
-    autoHideMenuBar: {
+    darkMode: {
         type: 'boolean',
-        default: true
+        default: false
     },
     firstRun: {
         type: 'boolean',
         default: true
     },
+    tray: {
+        type: 'boolean',
+        default: false
+    }
 };
+
+const store = new Store({
+    schema
+});
 
 const updateSettings = (values) => {
     console.log('updating settings');
@@ -49,10 +60,18 @@ const updateSettings = (values) => {
         console.log("passlist set to", values[1]);
         chngCnt++;
     }
-    if (values[2] != undefined && values[2] != store.get('autoHideMenuBar') && values[2] != '') {
-        //set the autohide
-        store.set('autoHideMenuBar', values[2]);
-        console.log("autohide set to", values[2]);
+    if (values[2] != undefined && values[2] != store.get('darkMode')) {
+        //set the dark mode
+        store.set('darkMode', values[2]);
+        console.log("darkMode set to", values[2]);
+        //reload the webview
+        view.webContents.reload();
+        chngCnt++;
+    }
+    if (values[3] != undefined && values[3] != store.get('tray')) {
+        //set the tray
+        store.set('tray', values[3]);
+        console.log("tray set to", values[3]);
         chngCnt++;
     }
     //check if any of the values were changed
@@ -61,6 +80,35 @@ const updateSettings = (values) => {
         mainWindow.reload();
     }
 }
+
+//async function to create the tray and returns the tray object after it is added to the system tray
+async function createTray() {
+    //check if the tray is enabled in the settings and that the tray is not already created
+    if (tray === null) {
+        //create the tray
+        tray = new Tray(__dirname + '/../onenote-e-icon.png')
+        const contextMenu = Menu.buildFromTemplate([{
+            label: 'OneNote-E',
+            click: () => {
+                mainWindow.show();
+            }
+        }, {
+            label: 'Settings',
+            click: () => {
+                openSettings();
+            }
+        }, {
+            label: 'Quit',
+            click: () => {
+                app.quit();
+            }
+        }, ])
+        tray.setToolTip('OneNote-E')
+        tray.setContextMenu(contextMenu)
+    }
+    return tray;
+}
+
 
 function createWindow2() {
     mainWindow = new BrowserWindow({
@@ -82,27 +130,34 @@ function createWindow2() {
 
 function openSettings() {
     //check if the settings window is already open
-    settingsWindow = new BrowserWindow({
-        title: 'Settings',
-        autoHideMenuBar: true,
-        frame: true,
-        DevTools: true,
-        minWidth: 350,
-        minHeight: 600,
-        width: 350,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+    if (settingsWindow === null) {
+        settingsWindow = new BrowserWindow({
+            title: 'Settings',
+            autoHideMenuBar: true,
+            frame: true,
+            DevTools: true,
+            minWidth: 350,
+            minHeight: 600,
+            width: 350,
+            height: 600,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            }
+        })
+        settingsWindow.loadURL('file://' + __dirname + '/pages/settings.html')
+        //settingsWindow.openDevTools()
+        //deal with closing the window
+        settingsWindow.on('closed', () => {
+            settingsWindow = null
+            mainWindow.webContents.send('settings', 'close')
+        })
+        if (ndenv === 'dev') {
+            settingsWindow.openDevTools()
         }
-    })
-    settingsWindow.loadURL('file://' + __dirname + '/pages/settings.html')
-    //settingsWindow.openDevTools()
-    //deal with closing the window
-    settingsWindow.on('closed', () => {
-        settingsWindow = null
-        mainWindow.webContents.send('settings', 'close')
-    })
+    } else {
+        settingsWindow.show();
+    }
 }
 
 function resizeBrowserView(minmax) {
@@ -111,21 +166,19 @@ function resizeBrowserView(minmax) {
         //create a timeout to wait for the window to be resized before resizing the browser view with it
         //this is to prevent the browser view from being resized before the window is
         let timeout = setTimeout(() => {
-            //resize the browser view
             view.setBounds({
                 x: 0,
-                y: 0,
+                y: 36,
                 width: mainWindow.getBounds().width,
-                height: mainWindow.getBounds().height-35
+                height: mainWindow.getBounds().height - 35
             })
-            //clear the timeout
-            console.log('clearing timeout');
             clearTimeout(timeout);
-        }, 100);
+        }, 70);
     } else {
+        //if its not a min/max resize then just resize the browser view
         view.setBounds({
             x: 0,
-            y: 35,
+            y: 36,
             width: mainWindow.getBounds().width,
             height: mainWindow.getBounds().height - 35
         })
@@ -136,12 +189,16 @@ if (store.get('firstRun') == true) {
     store.set('firstRun', false);
     store.set('homepage', 'https://onenote.com/notebooks');
     store.set('passLst', 'https://google.com');
-    store.set('autoHideMenuBar', true);
+    store.set('DarkMode', false);
 }
 
 app.on('ready', () => {
     createWindow2()
-    //show a loading message
+    //if the tray is enabled then create the tray
+    if (store.get('tray') === true) {
+        createTray();
+    }
+    //console.log("store path: " + store.path)
     mainWindow.loadURL('file://' + __dirname + '/pages/renderer.html')
     //create a browser view of the homepage
     view = new BrowserView({
@@ -151,22 +208,34 @@ app.on('ready', () => {
         }
     })
     mainWindow.setBrowserView(view)
-    //get the size of the window and set the view to the same width but 30px less in height and put it at the bottom of the window
-    let size = mainWindow.getSize()
-    view.setBounds({
-        x: 0,
-        y: 35,
-        width: size[0],
-        height: size[1] - 35
+    resizeBrowserView(false)
+    //deal with window resizing for the browser view
+    mainWindow.on('maximize', () => {
+        resizeBrowserView(true);
     })
-    //create a listener for the window resize event
+    mainWindow.on('unmaximize', () => {
+        resizeBrowserView(true);
+    })
     mainWindow.on('resize', () => {
-        resizeBrowserView()
+        resizeBrowserView(false)
     })
     view.webContents.loadURL(store.get('homepage'))
+    //enable the dark mode listener if its enabled (this is not finished)
+    view.webContents.on('did-navigate', (event, url) => {
+        //check if the url is in onenote or sharepoint
+        if (store.get('darkMode') === true) {
+            if (url.includes('onenote.com') || url.includes('sharepoint.com')) {
+                //inject the css invert of 60% into the page and all text to white
+                view.webContents.insertCSS('html {-webkit-filter: invert(70%); filter: invert(70%); -webkit-transition: all 0.5s ease; transition: all 0.5s ease; color: white;}')
+            } else {
+                console.log('not one note or sharepoint, not filtering')
+            }
+
+        }
+    })
     //check if we are running in dev mode
     ndenv = process.env.NODE_ENV
-    console.log(ndenv)
+    console.log("env is: " + ndenv)
     if (ndenv === 'dev') {
         mainWindow.webContents.openDevTools()
     }
@@ -200,20 +269,18 @@ ipcMain.on('topbar', (event, arg) => {
             if (mainWindow.isMaximized()) {
                 //if it is then unmaximize it
                 mainWindow.unmaximize()
-                resizeBrowserView(true)
             } else {
                 //if it isn't then maximize it
                 mainWindow.maximize()
-                resizeBrowserView(true)
             }
             break;
         case 'home':
             //load the homepage
-            view.webContents.loadURL(store.get('homepage'))
+            view.webContents.loadURL(store.get('homepage', true))
             break;
         case 'passLst':
             //load the passlist
-            view.webContents.loadURL(store.get('passLst'))
+            view.webContents.loadURL(store.get('passLst', true))
             break;
         case 'settings':
             //open the settings window
@@ -229,17 +296,19 @@ ipcMain.on('settings', (event, arg) => {
     let settings = {
         homepage: store.get('homepage'),
         passLst: store.get('passLst'),
-        autoHideMenuBar: store.get('autoHideMenuBar')
+        darkMode: store.get('darkMode'),
+        tray: store.get('tray')
     }
     if (arg === 'focus') {
         settingsWindow.focus()
-    } else if (arg === 'request-load') {
-        //send the current settings to the requestor
-        console.log('sending settings to main window');
-        mainWindow.webContents.send('settings', [store.get('homepage'), store.get('passLst'), store.get('autoHideMenuBar')])
     } else if (arg === 'request') {
         //send the current settings to the requestor
         settingsWindow.webContents.send('settings', settings)
+    } else {
+        console.log(arg)
+        //set the settings in the store
+        updateSettings(arg)
+        settingsWindow.close()
     }
 })
 

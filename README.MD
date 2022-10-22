@@ -10,9 +10,11 @@ OneNote-E is an electron based app designed to bring onenote to the linux deskto
 
 - install to desktop (builds for linux deb and rpm and support for windows builds)
 - view main tab that laods onenote.com/notebooks and can navigate to sub pages
-- second tab is listed as server-list for my own use but it can be changed to ANY url 
+- second tab is listed as server-list for my own use but it can be changed to ANY url, tab name customization for that one is not implmented yet
 - ✨settings✨
--- yes they work for the url changing, but more to come
+-- url customization
+-- darkmode for onenote and sharepoint pages (its a lazy webkit invert)
+-- tray icon for the app, requires app restart to take effect.
 - persistent settings across app loads
 - pages are cached relatiely well making loading after the first few a lot faster/snappier
 
@@ -21,12 +23,12 @@ OneNote-E is an electron based app designed to bring onenote to the linux deskto
 - dynamic tabs and tab customization
 - external link handling (currently just navigates the page instead)
 - window customizations like bar color or force page fonts
-- Tab js/css injection so you can change styles to your liking
+- Tab js/css injection so you can change styles to your liking (kinda in the works, at least webkit i was able to test working)
 - Note taking built in. Yes i know its onenote, but some of us use it to access work info so notes would be nice
 - Maybe Mac support
 
-> Some of these features may never come or might
-> take a while as i have multiple things im working on
+> Some of these features may never come or might take
+> a while as i have multiple things im working on
 > next main feature right now is the custom tabs and link handling
 
 ## Tech
@@ -63,13 +65,11 @@ sorry this section is short as i am not proficient in this department
 
 - install git and nodejs
 - clone the repo or download and extract
-- open a powershell or cmd to the folder
-- move package.json somewhere else that isnt here
-- move package-win.json to package.json
+- open a powershell or cmd to the folder in which the repo is cloned
 - npm install
 - npm run make-win
 
-## Sign Key and Cert
+## Sign Key and Cert (Only For Windows Installer)
 
 So this is that annoying part where i tell you how to do this, and its not anything crazy, just annoying. We are going to do this with openssl
 - install openssl

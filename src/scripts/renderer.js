@@ -20,9 +20,9 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (document.querySelector("#minBtn")) {
+    if (document.getElementById('minBtn')) {
         document.querySelector("#minBtn").addEventListener("click", () => {
-            ipcrenderer.send("topbar", "minimize");
+            ipcrenderer.send("topbar", "min");
         });
     }
 

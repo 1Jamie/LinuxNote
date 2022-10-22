@@ -83,21 +83,18 @@ body {
     z-index: 1;
     padding: 5px 5px;
     text-align: right;
-    float: right;
     font-family: "Segoe UI Light", "Segoe UI Web Light", "Segoe UI Web Regular", "Segoe UI", "Segoe UI Symbol", "HelveticaNeue-Light", "Helvetica Neue", Arial, sans-serif;
 }
 
-.rightbutton {
-    background-color: #7f02b1;
-    color: rgb(255, 255, 255);
+.settingsbutton{
+    background-color: black;
+    color: white;
     cursor: pointer;
-    border-radius: 4px 4px 4px 4px;
-    font-size: 14px;
-    font-weight: 400;
-    font-style: bold;
-    padding: 5px 5px;
-    align-self: right;
-    float: right;
+    box-shadow: none;
+    font-size: 18px;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
     font-family: "Segoe UI Light", "Segoe UI Web Light", "Segoe UI Web Regular", "Segoe UI", "Segoe UI Symbol", "HelveticaNeue-Light", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -106,11 +103,11 @@ body {
     color: rgb(255, 255, 255);
     cursor: pointer;
     box-shadow: none;
+    font-size: 11px;
     height: 30px;
     width: 30px;
+    text-align: center;
+    vertical-align: middle;
     border-radius: 15px 15px 15px 15px;
-    padding: 5px 5px;
-    float: right;
     font-family: "Segoe UI Light", "Segoe UI Web Light", "Segoe UI Web Regular", "Segoe UI", "Segoe UI Symbol", "HelveticaNeue-Light", "Helvetica Neue", Arial, sans-serif;
-
 }
