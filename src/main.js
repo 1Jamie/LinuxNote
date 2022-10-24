@@ -30,6 +30,12 @@ const schema = {
         type: 'boolean',
         default: false
     },
+    darkLevel: {
+        type: 'number',
+        minimum: 1,
+        maximum: 100,
+        default: 70
+    },
     firstRun: {
         type: 'boolean',
         default: true
@@ -37,6 +43,10 @@ const schema = {
     tray: {
         type: 'boolean',
         default: false
+    },
+    lastOpen: {
+        type: 'string',
+        default: 'https://onenote.com/notebooks'
     }
 };
 
@@ -45,41 +55,34 @@ const store = new Store({
 });
 
 const updateSettings = (values) => {
-    console.log('updating settings');
+    logmsg('updating settings');
     let chngCnt = 0;
-    //check if any of the array values are undefined or the same as the current value
-    if (values[0] != undefined && values[0] != store.get('homepage') && values[0] != '') {
-        //set the homepage
-        store.set('homepage', values[0]);
-        console.log("homepage set to", values[0]);
-        chngCnt++;
-    }
-    if (values[1] != undefined && values[1] != store.get('passLst') && values[1] != '') {
-        //set the passlist
-        store.set('passLst', values[1]);
-        console.log("passlist set to", values[1]);
-        chngCnt++;
-    }
-    if (values[2] != undefined && values[2] != store.get('darkMode')) {
-        //set the dark mode
-        store.set('darkMode', values[2]);
-        console.log("darkMode set to", values[2]);
-        //reload the webview
-        view.webContents.reload();
-        chngCnt++;
-    }
-    if (values[3] != undefined && values[3] != store.get('tray')) {
-        //set the tray
-        store.set('tray', values[3]);
-        console.log("tray set to", values[3]);
-        chngCnt++;
+    //itterate through the values and update the settings
+    for (const [key, value] of Object.entries(values)) {
+        if (store.get(key) != value && (value != '' || value != null)) {
+            //if the key is darkLevel then convert it to a number
+            store.set(key, value);
+            logmsg('setting', key, 'to', value);
+            chngCnt++;
+        }
     }
     //check if any of the values were changed
     if (chngCnt > 0) {
-        //reload the main window
+        //reload the main window and browser view
         mainWindow.reload();
+        view.webContents.reload();
+        logmsg('reloading main window');
     }
 }
+
+//custom function for logging if the dev tools are enabled
+function logmsg(msg) {
+    //check if the dev evn is set
+    if (process.env.NODE_ENV === 'dev') {
+        console.log(msg);
+    }
+}
+logmsg('logmsg test');
 
 //async function to create the tray and returns the tray object after it is added to the system tray
 async function createTray() {
@@ -152,6 +155,7 @@ function openSettings() {
             settingsWindow = null
             mainWindow.webContents.send('settings', 'close')
         })
+        //open dev tools if the dev tools is enabled
         if (ndenv === 'dev') {
             settingsWindow.openDevTools()
         }
@@ -198,7 +202,7 @@ app.on('ready', () => {
     if (store.get('tray') === true) {
         createTray();
     }
-    //console.log("store path: " + store.path)
+    //logmsg("store path: " + store.path)
     mainWindow.loadURL('file://' + __dirname + '/pages/renderer.html')
     //create a browser view of the homepage
     view = new BrowserView({
@@ -207,8 +211,11 @@ app.on('ready', () => {
             contextIsolation: true,
         }
     })
+    //get the lastOpen value from the store
+    let lastOpen = store.get('lastOpen');
+
     mainWindow.setBrowserView(view)
-    resizeBrowserView(false)
+    resizeBrowserView(false);
     //deal with window resizing for the browser view
     mainWindow.on('maximize', () => {
         resizeBrowserView(true);
@@ -219,23 +226,42 @@ app.on('ready', () => {
     mainWindow.on('resize', () => {
         resizeBrowserView(false)
     })
-    view.webContents.loadURL(store.get('homepage'))
+    view.webContents.loadURL(lastOpen)
+    //after the page has loaded
+    view.webContents.on('dom-ready', () => {
+        //strip the hostname from the url so we can use it
+        let hostname = new URL(view.webContents.getURL()).hostname;
+        let trimmedHostname = hostname.split('.').slice(1, -1).join('.');
+    
+
+        //check if the lastOpen value contains onenote or sharepoint
+        if (store.get('homepage').includes(trimmedHostname)) {
+            logmsg('homepage selected');
+            //set the renderer's page element homePage to class disabled
+            mainWindow.webContents.send('setTab', 'homepage');
+        } else if (store.get('passLst').includes(trimmedHostname)) {
+            logmsg('sharepoint selected');
+            //set the renderer's page element serverlist to class disabled
+            mainWindow.webContents.send('setTab', 'passList');
+        }
+    })
     //enable the dark mode listener if its enabled (this is not finished)
     view.webContents.on('did-navigate', (event, url) => {
         //check if the url is in onenote or sharepoint
         if (store.get('darkMode') === true) {
             if (url.includes('onenote.com') || url.includes('sharepoint.com')) {
+                let darkLevel = store.get('darkLevel');
                 //inject the css invert of 60% into the page and all text to white
-                view.webContents.insertCSS('html {-webkit-filter: invert(70%); filter: invert(70%); -webkit-transition: all 0.5s ease; transition: all 0.5s ease; color: white;}')
+                view.webContents.insertCSS(`html {-webkit-filter: invert(${darkLevel}%); filter: invert(${darkLevel}%); -webkit-transition: all 0.5s ease; transition: all 0.5s ease; color: white;}`)
             } else {
-                console.log('not one note or sharepoint, not filtering')
+                logmsg('not one note or sharepoint, not filtering')
             }
 
         }
     })
     //check if we are running in dev mode
     ndenv = process.env.NODE_ENV
-    console.log("env is: " + ndenv)
+    logmsg("env is: " + ndenv)
     if (ndenv === 'dev') {
         mainWindow.webContents.openDevTools()
     }
@@ -243,7 +269,7 @@ app.on('ready', () => {
 
 //deal with tab swapping
 ipcMain.on('tab', (event, arg) => {
-    console.log(arg)
+    logmsg(arg)
 })
 
 //after the window is loaded create a listener for the ipcrenderer
@@ -262,7 +288,7 @@ ipcMain.on('topbar', (event, arg) => {
         case 'min':
             //minimize the window
             mainWindow.minimize()
-            console.log('minimize')
+            logmsg('minimize')
             break;
         case 'minmax':
             //check if the window is maximized
@@ -297,6 +323,7 @@ ipcMain.on('settings', (event, arg) => {
         homepage: store.get('homepage'),
         passLst: store.get('passLst'),
         darkMode: store.get('darkMode'),
+        darkLevel: store.get('darkLevel'),
         tray: store.get('tray')
     }
     if (arg === 'focus') {
@@ -305,7 +332,7 @@ ipcMain.on('settings', (event, arg) => {
         //send the current settings to the requestor
         settingsWindow.webContents.send('settings', settings)
     } else {
-        console.log(arg)
+        logmsg(arg)
         //set the settings in the store
         updateSettings(arg)
         settingsWindow.close()
@@ -315,7 +342,7 @@ ipcMain.on('settings', (event, arg) => {
 
 //listener to save settings
 ipcMain.on('settings-page', (event, arg) => {
-    console.log(arg)
+    logmsg(arg)
     updateSettings(arg)
     //close the settings window
     settingsWindow.close()
@@ -324,6 +351,9 @@ ipcMain.on('settings-page', (event, arg) => {
 
 //close app when all windows are closed
 app.on('window-all-closed', () => {
+    //set the lastOpen value in the store
+    store.set('lastOpen', view.webContents.getURL())
+    logmsg('lastOpen: ' + store.get('lastOpen'))
     if (process.platform !== 'darwin') {
         app.quit()
     }
