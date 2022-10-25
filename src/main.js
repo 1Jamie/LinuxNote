@@ -95,7 +95,7 @@ async function createTray() {
         //create the tray
         tray = new Tray(__dirname + '/../onenote-e-icon.png')
         const contextMenu = Menu.buildFromTemplate([{
-            label: 'OneNote-E',
+            label: 'LinuxNote',
             click: () => {
                 mainWindow.show();
             }
@@ -110,7 +110,7 @@ async function createTray() {
                 app.quit();
             }
         }, ])
-        tray.setToolTip('OneNote-E')
+        tray.setToolTip('LinuxNote')
         tray.setContextMenu(contextMenu)
     }
     return tray;
@@ -285,8 +285,6 @@ app.on('ready', () => {
         } else {
             //send it to the browser and  cancel the event
             console.log('not ours')
-            event.preventDefault()
-            shell.openExternal(url)
         }
     })
     //check if we are running in dev mode
@@ -304,9 +302,9 @@ app.on('web-contents-created', (event, contents) => {
         let tab1Base = new URL(store.get('tab1Url')).hostname.split('.').slice(-2).join('.');
         let tab2Base = new URL(store.get('tab2Url')).hostname.split('.').slice(-2).join('.');
         //check if its a url for tab1 or tab2
-        if (url.includes(tab1Base) || url.includes(tab2Base)) {
-            //just open it in a new window
-            return { action: 'allow' }
+        if (url.includes(tab1Base) || url.includes(tab2Base) || url.includes('sharepoint.com') || url.includes('onenote.com')) {
+            //just navigate to the url
+            view.webContents.loadURL(url)
         } else {
             //open it in the default browser
             shell.openExternal(url)

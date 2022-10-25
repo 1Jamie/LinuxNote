@@ -1,6 +1,6 @@
 {
-    "name": "onenote-e",
-    "version": "0.6.0",
+    "name": "linuxnote",
+    "version": "0.6.01",
     "description": "Linux Desktop integration of Onenote using Electron.",
     "main": "src/main.js",
     "scripts": {
@@ -33,21 +33,21 @@
                 "icon": "onenote-e-icon.png",
                 "email": "charja113@gmail.com",
                 "homepage": "https://github.com/1jamie/onenote-e",
-                "name": "onenote-e",
-                "executableName": "onenote-e"
+                "name": "LinuxNote",
+                "executableName": "linuxnote"
             },
             "makers": [
                 {
                     "name": "@electron-forge/maker-squirrel",
                     "config": {
-                        "appId": "com.onenote-e.electron",
+                        "appId": "com.linuxnote.electron",
                         "maintainer": "1jamie:github",
                         "homepage": "https://github.com/1jamie/onenote-e",
                         "setupIcon": "onenote-e-icon.ico",
                         "certificateFile": "onenote-e.pfx",
                         "useAppIdAsId": true,
-                        "uninstallDisplayName": "onenote-e",
-                        "uninstallId": "com.onenote-e.electron"
+                        "uninstallDisplayName": "LinuxNote",
+                        "uninstallId": "com.linuxnote.electron"
                     }
                 },
                 {
