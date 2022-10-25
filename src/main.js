@@ -93,7 +93,7 @@ async function createTray() {
     //check if the tray is enabled in the settings and that the tray is not already created
     if (tray === null) {
         //create the tray
-        tray = new Tray(__dirname + '/../onenote-e-icon.png')
+        tray = new Tray(__dirname + '/../linuxnote-icon.png')
         const contextMenu = Menu.buildFromTemplate([{
             label: 'LinuxNote',
             click: () => {
@@ -126,7 +126,7 @@ function createWindow() {
         minHeight: 600,
         devTools: true,
         scrollHidden: true,
-        icon: path.join(__dirname, 'onenote-e-icon.png'),
+        icon: path.join(__dirname, 'linuxnote-icon.png'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -247,25 +247,6 @@ app.on('ready', () => {
         view.webContents.loadURL(store.get('tab1Url'))
     }
 
-    //after the page has loaded
-    /* removed because i dont know if i want this functionality
-    view.webContents.on('dom-ready', () => {
-        //strip the hostname from the url so we can use it
-        let hostname = new URL(view.webContents.getURL()).hostname;
-        let trimmedHostname = hostname.split('.').slice(1, -1).join('.');
-        //check if the lastOpen value contains the first or second tab url bases
-        if (store.get('tab1Url').includes(trimmedHostname)) {
-            logmsg('tab1 selected');
-            //set the renderer's page element tab1 to class disabled
-            mainWindow.webContents.send('setTab', 'tab1');
-        } else if (store.get('tab2Url').includes(trimmedHostname)) {
-            logmsg('tab2 selected');
-            //set the renderer's page element tab2 to class disabled
-            mainWindow.webContents.send('setTab', 'tab2');
-        }
-    })
-    */
-
     //enable the dark mode listener if its enabled (this is not finished)
     view.webContents.on('did-navigate', (event, url) => {
         //create base names for each tab eg onenote or sharepoint
@@ -275,7 +256,7 @@ app.on('ready', () => {
         let tab1Base = tab1Hostname.split('.').slice(-2).join('.');
         let tab2Base = tab2Hostname.split('.').slice(-2).join('.');
         //see if the url is the same hostname as the tab1 or tab2 url
-        if (url.includes(tab1Base)||url.includes(tab2Base)) {
+        if (url.includes(tab1Base)||url.includes(tab2Base)||url.includes('localhost')||url.includes('onenote.com')||url.includes('sharepoint.com')) {
             //see if the dark mode is enabled
             if (store.get('darkMode') === true) {
                 let darkLevel = store.get('darkLevel');
@@ -284,7 +265,7 @@ app.on('ready', () => {
             }
         } else {
             //send it to the browser and  cancel the event
-            console.log('not ours')
+            logmsg('not ours')
         }
     })
     //check if we are running in dev mode

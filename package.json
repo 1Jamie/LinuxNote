@@ -30,9 +30,9 @@
     "config": {
         "forge": {
             "packagerConfig": {
-                "icon": "onenote-e-icon.png",
+                "icon": "linuxnote-icon.png",
                 "email": "charja113@gmail.com",
-                "homepage": "https://github.com/1jamie/onenote-e",
+                "homepage": "https://github.com/1jamie/linuxnote",
                 "name": "LinuxNote",
                 "executableName": "linuxnote"
             },
@@ -42,9 +42,9 @@
                     "config": {
                         "appId": "com.linuxnote.electron",
                         "maintainer": "1jamie:github",
-                        "homepage": "https://github.com/1jamie/onenote-e",
-                        "setupIcon": "onenote-e-icon.ico",
-                        "certificateFile": "onenote-e.pfx",
+                        "homepage": "https://github.com/1jamie/linuxnote",
+                        "setupIcon": "linuxnote-icon.ico",
+                        "certificateFile": "linuxnote.pfx",
                         "useAppIdAsId": true,
                         "uninstallDisplayName": "LinuxNote",
                         "uninstallId": "com.linuxnote.electron"
@@ -60,18 +60,18 @@
                     "name": "@electron-forge/maker-deb",
                     "config": {
                         "maintainer": "Jamie Charlton",
-                        "homepage": "https://github.com/1jamie/onenote-e",
+                        "homepage": "https://github.com/1jamie/linuxnote",
                         "category": "Office",
-                        "icon": "onenote-e-icon.png"
+                        "icon": "linuxnote-icon.png"
                     }
                 },
                 {
                     "name": "@electron-forge/maker-rpm",
                     "config": {
                         "maintainer": "Jamie Charlton",
-                        "homepage": "https://github.com/1jamie/onenote-e",
+                        "homepage": "https://github.com/1jamie/linuxnote",
                         "category": "Office",
-                        "icon": "onenote-e-icon.png"
+                        "icon": "linuxnote-icon.png"
                     }
                 }
             ]

@@ -124,3 +124,17 @@ body {
 .checkbox:checked {
     background-color: aqua;
 }
+
+.githubLink {
+    opacity: 70%;
+    padding: 5px 0px 5px 5px;;   
+    height: 20px; 
+    width: 20px; 
+    display: inline; 
+    vertical-align: middle;
+}
+
+.githubLink:hover {
+    opacity: 100%;
+    cursor: pointer;
+}

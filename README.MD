@@ -1,11 +1,11 @@
-# Onenote-E
+# LinuxNote
 ## Electron app integrating OneNote into a linux app
 
 
-OneNote-E is an electron based app designed to bring onenote to the linux desktop. Currently supports two url tabs that the adresses can be customized from the settings page. 
+LinuxNote is an electron based app designed to bring onenote to the linux desktop. Currently supports two url tabs that the adresses can be customized from the settings page. 
 
-![image of app](https://github.com/1Jamie/OneNote-E/blob/main/onenote-e-0.png?raw=true)
-![image of app dark](https://github.com/1Jamie/OneNote-E/blob/main/onenote-e-0-dark.png?raw=true)
+![image of app](https://github.com/1Jamie/LinuxNote/blob/main/LinuxNote-0.png?raw=true)
+![image of app dark](https://github.com/1Jamie/LinuxNote/blob/main/LinuxNote-0-dark.png?raw=true)
 
 ## Currently Working
 
@@ -36,7 +36,7 @@ OneNote-E is an electron based app designed to bring onenote to the linux deskto
 
 ## Tech
 
-Onenote-E is built on electron and uses relatively few pieces and used electron forge to build
+LinuxNote is built on electron and uses relatively few pieces and used electron forge to build
 
 - [Electron](https://www.npmjs.com/package/electron) - Nodejs Desktop application framework .
 - [Electron-Store](https://www.npmjs.com/package/electron-store) - persistent settings and storing for electron apps.
@@ -50,7 +50,7 @@ the steps to build this for linux are honestly rather easy
 - Install nodejs and npm on your system. Please follow [npm's documentation](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - clone the repo to your local system 
 ```
-$ git clone https://github.com/1jamie/onenote-e.git
+$ git clone https://github.com/1jamie/LinuxNote.git
 ```
 - install the packages (change into the apps directory first please, i feel like this should be a given)
 ```
@@ -92,13 +92,13 @@ openssl req -key self.key -new -out appstuffs.csr
 ```
 - Take this csr and sign it
 ```
-openssl x509 -req -days 3650 -in appstuffs.csr -signkey self.key -out onenote-e.crt
+openssl x509 -req -days 3650 -in appstuffs.csr -signkey self.key -out LinuxNote.crt
 ```
 - Now we need to take the key and crt and make a pfx pack of it
 ```
-openssl pkcs12 -export -out onenote-e.pfx -inkey self.key -in onenote-e.crt
+openssl pkcs12 -export -out LinuxNote.pfx -inkey self.key -in LinuxNote.crt
 ```
-Now you should have a onenote-e.pfx! toss it in the app directory and point to it in the package.json
+Now you should have a LinuxNote.pfx! toss it in the app directory and point to it in the package.json
 
 ## Contributing
 uhhhh, not a clue, just try to keep it tidy and file a pull request, i dont mind giving stuff a read!

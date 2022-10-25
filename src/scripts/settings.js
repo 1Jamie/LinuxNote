@@ -1,3 +1,5 @@
+const { version } = require('store');
+
 let ipcrenderer = require('electron').ipcRenderer;
 let homepage, passlist, darkMode, tray;
 
@@ -55,6 +57,9 @@ ipcrenderer.on("settings", (event, arg) => {
     tab2 = arg.tab2Url;
     tray = arg.tray;
 
+    //get the version element and set the version
+    document.getElementById("version").innerHTML = "Version: " + arg.version;
+
     //set the height of settingsBody to the height of the window
     document.getElementById("settingsBody").style.height = window.innerHeight + "px";
     //if dark mode is disabled then disable the dark level slider
@@ -106,6 +111,9 @@ document.getElementById("darkLevel").addEventListener("input", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    document.getElementById("githubLink").addEventListener("click", () => {
+        require('electron').shell.openExternal("https://github.com/1jamie/linuxnote");
+    });
     //add a listener to the save button
     document.getElementById("saveBtn").addEventListener("click", () => {
         //send the settings to the main process
