@@ -4,56 +4,45 @@ const {
     BrowserView,
     ipcMain,
     Menu,
-    Tray
+    Tray,
+    shell
 } = require('electron')
 const path = require('path')
 const Store = require('electron-store');
-//fix for windows installer
+//import schema
+const schema = require('./scripts/schema.js');
+
+//fix for windows installer bug of opening the app multiple times during install
 if (require('electron-squirrel-startup')) return app.quit();
+//just declare the variables we will need globally
 let settingsWindow = null;
 let mainWindow = null;
 let view = null;
 let tray = null;
 
-//create the store
-
-const schema = {
-    homepage: {
-        type: 'string',
-        default: 'https://onenote.com/notebooks'
-    },
-    passLst: {
-        type: 'string',
-        default: 'https://google.com'
-    },
-    darkMode: {
-        type: 'boolean',
-        default: false
-    },
-    darkLevel: {
-        type: 'number',
-        minimum: 1,
-        maximum: 100,
-        default: 70
-    },
-    firstRun: {
-        type: 'boolean',
-        default: true
-    },
-    tray: {
-        type: 'boolean',
-        default: false
-    },
-    lastOpen: {
-        type: 'string',
-        default: 'https://onenote.com/notebooks'
-    }
-};
-
 const store = new Store({
     schema
 });
 
+//check if the key homepage is set and if so move it to tab1Url, basically a migration if the users store is old since its the only change and i dont want to do a migration schema
+if (store.get('homepage') != null || store.get('passLst') != null) {
+    console.log('migrating config store to new schema');
+    if (store.get('homepage')) {
+        console.log('moving homepage to tab1');
+        store.set('tab1Url', store.get('homepage'));
+        store.delete('homepage');
+    }
+    //do the same for passlst
+    if (store.get('passLst')) {
+        console.log('migrating passList to tab2');
+        store.set('tab2Url', store.get('passLst'));
+        store.delete('passLst');
+    }
+    //update the version in the store
+    store.set('version', app.getVersion());
+}
+
+//this function updates the settings in the store
 const updateSettings = (values) => {
     logmsg('updating settings');
     let chngCnt = 0;
@@ -62,17 +51,32 @@ const updateSettings = (values) => {
         if (store.get(key) != value && (value != '' || value != null)) {
             //if the key is darkLevel then convert it to a number
             store.set(key, value);
-            logmsg('setting', key, 'to', value);
+            logmsg('setting ' + key + ' to ' + value);
             chngCnt++;
         }
     }
     //check if any of the values were changed
     if (chngCnt > 0) {
+        //save the current page to lastOpen before reloading so that it opens to the same page
+        store.set('lastOpen', view.webContents.getURL());
         //reload the main window and browser view
         mainWindow.reload();
         view.webContents.reload();
         logmsg('reloading main window');
     }
+}
+
+//function that takes an array of names and returns an object of the names and their values
+function getSettings(names) {
+    let settings = {};
+    for (let i = 0; i < names.length; i++) {
+        if (names[i] === 'version') {
+            settings[names[i]] = app.getVersion();
+        } else {
+            settings[names[i]] = store.get(names[i]);
+        }
+    }
+    return settings;
 }
 
 //custom function for logging if the dev tools are enabled
@@ -113,7 +117,7 @@ async function createTray() {
 }
 
 
-function createWindow2() {
+function createWindow() {
     mainWindow = new BrowserWindow({
         title: app.name,
         autoHideMenuBar: true,
@@ -164,6 +168,17 @@ function openSettings() {
     }
 }
 
+//function to send the tabnames to the main window
+function sendTabNames() {
+    //get the tab names from the store
+    let tabNames = {
+        tab1Name: store.get('tab1Name'),
+        tab2Name: store.get('tab2Name'),
+    }
+    //send the tab names to the main window
+    mainWindow.webContents.send('tabNames', tabNames);
+}
+
 function resizeBrowserView(minmax) {
     //resize the browser view
     if (minmax === true) {
@@ -191,29 +206,26 @@ function resizeBrowserView(minmax) {
 
 if (store.get('firstRun') == true) {
     store.set('firstRun', false);
-    store.set('homepage', 'https://onenote.com/notebooks');
-    store.set('passLst', 'https://google.com');
-    store.set('DarkMode', false);
+    //leave this here for in case i want to change some things on first run
 }
 
+//our main even chain happens here
 app.on('ready', () => {
-    createWindow2()
+    createWindow()
     //if the tray is enabled then create the tray
     if (store.get('tray') === true) {
         createTray();
     }
     //logmsg("store path: " + store.path)
     mainWindow.loadURL('file://' + __dirname + '/pages/renderer.html')
-    //create a browser view of the homepage
+    //create a browser view of the lastloaded url if it is set
     view = new BrowserView({
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
         }
     })
-    //get the lastOpen value from the store
-    let lastOpen = store.get('lastOpen');
-
+    //set the browser view to the main window
     mainWindow.setBrowserView(view)
     resizeBrowserView(false);
     //deal with window resizing for the browser view
@@ -226,37 +238,55 @@ app.on('ready', () => {
     mainWindow.on('resize', () => {
         resizeBrowserView(false)
     })
-    view.webContents.loadURL(lastOpen)
+    //get the lastOpen value from the store
+    let lastOpen = store.get('lastOpen');
+    //check if the lastOpen value is set and if it is then load it, if not then load tab1Url
+    if (lastOpen != null) {
+        view.webContents.loadURL(lastOpen)
+    } else {
+        view.webContents.loadURL(store.get('tab1Url'))
+    }
+
     //after the page has loaded
+    /* removed because i dont know if i want this functionality
     view.webContents.on('dom-ready', () => {
         //strip the hostname from the url so we can use it
         let hostname = new URL(view.webContents.getURL()).hostname;
         let trimmedHostname = hostname.split('.').slice(1, -1).join('.');
-    
-
-        //check if the lastOpen value contains onenote or sharepoint
-        if (store.get('homepage').includes(trimmedHostname)) {
-            logmsg('homepage selected');
-            //set the renderer's page element homePage to class disabled
-            mainWindow.webContents.send('setTab', 'homepage');
-        } else if (store.get('passLst').includes(trimmedHostname)) {
-            logmsg('sharepoint selected');
-            //set the renderer's page element serverlist to class disabled
-            mainWindow.webContents.send('setTab', 'passList');
+        //check if the lastOpen value contains the first or second tab url bases
+        if (store.get('tab1Url').includes(trimmedHostname)) {
+            logmsg('tab1 selected');
+            //set the renderer's page element tab1 to class disabled
+            mainWindow.webContents.send('setTab', 'tab1');
+        } else if (store.get('tab2Url').includes(trimmedHostname)) {
+            logmsg('tab2 selected');
+            //set the renderer's page element tab2 to class disabled
+            mainWindow.webContents.send('setTab', 'tab2');
         }
     })
+    */
+
     //enable the dark mode listener if its enabled (this is not finished)
     view.webContents.on('did-navigate', (event, url) => {
-        //check if the url is in onenote or sharepoint
-        if (store.get('darkMode') === true) {
-            if (url.includes('onenote.com') || url.includes('sharepoint.com')) {
+        //create base names for each tab eg onenote or sharepoint
+        let tab1Hostname = new URL(store.get('tab1Url')).hostname;
+        let tab2Hostname = new URL(store.get('tab2Url')).hostname;
+        //grab the last two parts of the url
+        let tab1Base = tab1Hostname.split('.').slice(-2).join('.');
+        let tab2Base = tab2Hostname.split('.').slice(-2).join('.');
+        //see if the url is the same hostname as the tab1 or tab2 url
+        if (url.includes(tab1Base)||url.includes(tab2Base)) {
+            //see if the dark mode is enabled
+            if (store.get('darkMode') === true) {
                 let darkLevel = store.get('darkLevel');
                 //inject the css invert of 60% into the page and all text to white
                 view.webContents.insertCSS(`html {-webkit-filter: invert(${darkLevel}%); filter: invert(${darkLevel}%); -webkit-transition: all 0.5s ease; transition: all 0.5s ease; color: white;}`)
-            } else {
-                logmsg('not one note or sharepoint, not filtering')
             }
-
+        } else {
+            //send it to the browser and  cancel the event
+            console.log('not ours')
+            event.preventDefault()
+            shell.openExternal(url)
         }
     })
     //check if we are running in dev mode
@@ -267,9 +297,22 @@ app.on('ready', () => {
     }
 })
 
-//deal with tab swapping
-ipcMain.on('tab', (event, arg) => {
-    logmsg(arg)
+//if any sub windows open see if they are external links and open them in the default browser
+app.on('web-contents-created', (event, contents) => {
+    contents.setWindowOpenHandler(({ url }) => {
+        //get the urls and split them into base names
+        let tab1Base = new URL(store.get('tab1Url')).hostname.split('.').slice(-2).join('.');
+        let tab2Base = new URL(store.get('tab2Url')).hostname.split('.').slice(-2).join('.');
+        //check if its a url for tab1 or tab2
+        if (url.includes(tab1Base) || url.includes(tab2Base)) {
+            //just open it in a new window
+            return { action: 'allow' }
+        } else {
+            //open it in the default browser
+            shell.openExternal(url)
+            return { action: 'deny' }
+        }
+    })
 })
 
 //after the window is loaded create a listener for the ipcrenderer
@@ -291,22 +334,20 @@ ipcMain.on('topbar', (event, arg) => {
             logmsg('minimize')
             break;
         case 'minmax':
-            //check if the window is maximized
+            //deal with the minimize/maximize button
             if (mainWindow.isMaximized()) {
-                //if it is then unmaximize it
                 mainWindow.unmaximize()
             } else {
-                //if it isn't then maximize it
                 mainWindow.maximize()
             }
             break;
-        case 'home':
-            //load the homepage
-            view.webContents.loadURL(store.get('homepage', true))
+        case 'tab1':
+            //load the tab1 url
+            view.webContents.loadURL(store.get('tab1Url', true))
             break;
-        case 'passLst':
-            //load the passlist
-            view.webContents.loadURL(store.get('passLst', true))
+        case 'tab2':
+            //load the tab2 url
+            view.webContents.loadURL(store.get('tab2Url', true))
             break;
         case 'settings':
             //open the settings window
@@ -319,13 +360,8 @@ ipcMain.on('topbar', (event, arg) => {
 //listener to open settings
 ipcMain.on('settings', (event, arg) => {
     //get the settings from the store
-    let settings = {
-        homepage: store.get('homepage'),
-        passLst: store.get('passLst'),
-        darkMode: store.get('darkMode'),
-        darkLevel: store.get('darkLevel'),
-        tray: store.get('tray')
-    }
+    let settingsList = ['tab1Url', 'tab1Name', 'tab2Url', 'tab2Name', 'tray', 'darkMode', 'darkLevel', 'version'];
+    let settings = getSettings(settingsList);
     if (arg === 'focus') {
         settingsWindow.focus()
     } else if (arg === 'request') {
@@ -348,6 +384,11 @@ ipcMain.on('settings-page', (event, arg) => {
     settingsWindow.close()
 })
 
+//listener for when the renderer is ready for the tab names
+ipcMain.on('sendTabNames', (event, arg) => {
+    sendTabNames()
+    logmsg('sent tab names')
+})
 
 //close app when all windows are closed
 app.on('window-all-closed', () => {

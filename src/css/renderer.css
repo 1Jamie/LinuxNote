@@ -33,7 +33,7 @@ body {
     color: rgb(255, 255, 255);
     cursor: pointer;
     box-shadow: none;
-    border-radius: 4px 4px 4px 4px;
+    border-radius: 0px 15px 15px 0px;
     font-size: 14px;
     font-weight: 400;
     font-style: bold;
@@ -47,14 +47,17 @@ body {
 .leftBtns {
     top: 0;
     left: 0;
-    width: 33%;
+    border-radius: 0 15px 15px 0;
+    width: 30%;
     padding: 5px 5px;
     float: left;
-    height: 100%;}
+    height: 25px;
+    background-color: #7f02b16c;
+}
 
 .middleUp {
     top: 0;
-    width: 33%;
+    width: 50%;
     background-color: #000000;
     overflow: hidden;
     text-align: center;
@@ -77,7 +80,7 @@ body {
 }
 
 .windowControls {   
-    width: 33%;
+    width: 20%;
     align-self: right;
     right: 0;
     z-index: 1;

@@ -1,7 +1,7 @@
 {
     "name": "onenote-e",
-    "version": "0.5.9-1",
-    "description": "Linux Desktop integration of Onenote using Electron and Webview.",
+    "version": "0.6.0",
+    "description": "Linux Desktop integration of Onenote using Electron.",
     "main": "src/main.js",
     "scripts": {
         "start": "electron-forge start",

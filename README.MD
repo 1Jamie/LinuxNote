@@ -5,23 +5,26 @@
 OneNote-E is an electron based app designed to bring onenote to the linux desktop. Currently supports two url tabs that the adresses can be customized from the settings page. 
 
 ![image of app](https://github.com/1Jamie/OneNote-E/blob/main/onenote-e-0.png?raw=true)
+![image of app dark](https://github.com/1Jamie/OneNote-E/blob/main/onenote-e-0-dark.png?raw=true)
 
 ## Currently Working
 
 - install to desktop (builds for linux deb and rpm and support for windows builds)
-- view main tab that laods onenote.com/notebooks and can navigate to sub pages
-- second tab is listed as server-list for my own use but it can be changed to ANY url, tab name customization for that one is not implmented yet
+- dual button usage for two pages, defualt is set to notebooks https://onenote.com/notebooks and server list with url https://google.com
+- customizable nav buttons
+- open last opened page from close
 - ✨settings✨
--- url customization
--- darkmode for onenote and sharepoint pages (its a lazy webkit invert)
--- tray icon for the app, requires app restart to take effect.
+- button name customization
+- url customization
+- darkmode for both added urls if the are different (its a lazy webkit invert)
+- invert amount slider for dark mode
+- tray icon for the app, requires app restart to take effect.
 - persistent settings across app loads
-- pages are cached relatiely well making loading after the first few a lot faster/snappier
 
 ## Planned Features
 
-- dynamic tabs and tab customization
-- external link handling (currently just navigates the page instead)
+- dynamic tabs (ability to add more)
+- external link handling (if its a link from the same hostname it navigates if its not it opens in default browser currently)
 - window customizations like bar color or force page fonts
 - Tab js/css injection so you can change styles to your liking (kinda in the works, at least webkit i was able to test working)
 - Note taking built in. Yes i know its onenote, but some of us use it to access work info so notes would be nice

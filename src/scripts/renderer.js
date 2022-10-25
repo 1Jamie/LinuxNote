@@ -2,7 +2,7 @@ let ipcrenderer = require('electron').ipcRenderer;
 
 console.log('starting renderer.js')
 
-//use this to clear the disable class on all the buttons
+//use this to clear the disable class on all the buttons (not in use for now)
 function clearDisable() {
     let disabled = document.querySelectorAll('.disabled');
     for (let i = 0; i < disabled.length; i++) {
@@ -10,16 +10,27 @@ function clearDisable() {
     }
 }
 
-//this is just to set which button is active on load
-ipcrenderer.on('setTab' , (event, arg) => {
-    console.log('received setTab', arg);
-    clearDisable();
-    if(arg === 'homepage') {
-        document.getElementById('homeBtn').classList.add('disabled');
-    } else if (arg === 'passList') {
-        document.getElementById('passLstBtn').classList.add('disabled');
-    }
+//tell the main process we are ready to receive the tab names
+ipcrenderer.send('sendTabNames');
+//set the buttons labels when main process sends them
+ipcrenderer.on('tabNames', (event, arg) => {
+    console.log('received tab names from main process', arg);
+    document.getElementById('tab1Btn').innerHTML = arg.tab1Name;
+    document.getElementById('tab2Btn').innerHTML = arg.tab2Name;
 });
+
+/* turned off for now as i dont know if i want this functionality
+ipcrenderer.on('setTab' , (event, arg) => {
+    //console.log('received setTab', arg);
+    //clearDisable();
+    if(arg === 'tab1') {
+        document.getElementById('tab1Btn').classList.add('disabled');
+    } else if (arg === 'tab2') {
+        document.getElementById('tab2Btn').classList.add('disabled');
+    } else if (arg === 'na') {
+        //just do nothing
+    }
+});*/
 
 //run all this after the page loads
 window.addEventListener("DOMContentLoaded", () => {
@@ -44,20 +55,20 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (document.querySelector("#homeBtn")) {
-        document.querySelector("#homeBtn").onclick = () => {
-            console.log("homeBtn clicked navigating");
+    if (document.querySelector("#tab1Btn")) {
+        document.querySelector("#tab1Btn").onclick = () => {
+            console.log("tab1Btn clicked, navigating");
             //send the action to the main process and clear the disable class from the button
-            ipcrenderer.send("topbar", "home");
-            clearDisable();
+            ipcrenderer.send("topbar", "tab1");
+            //clearDisable();
         };
     }
-    if (document.querySelector("#passLstBtn")) {
-        document.querySelector("#passLstBtn").onclick = () => {
-            console.log("passLstBtn clicked navigating");
+    if (document.querySelector("#tab2Btn")) {
+        document.querySelector("#tab2Btn").onclick = () => {
+            console.log("tab2Btn clicked navigating");
             //send the action to the main process and clear the disable class from the button
-            ipcrenderer.send("topbar", "passLst");
-            clearDisable();
+            ipcrenderer.send("topbar", "tab2");
+            //clearDisable();
         }
     };
 

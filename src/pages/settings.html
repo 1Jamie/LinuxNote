@@ -11,17 +11,24 @@
     <div class="settings">
         <div class="settingsHeader">
             <h1>Settings</h1>
+            <p id="version"></p>
         </div>
-        <div class="settingsBody">
+        <div id="settingsBody" class="settingsBody">
             <div class="settingsSection">
-                <h2>General Settings:</h2>
+                <h2>Button Settings:</h2>
                 <div class="settingsItem">
-                    <h3>Home Page:</h3>
-                    <input type="text" class="textInput" id="homePage" placeholder="https://onenote.com/notebooks">
+                    <h3>Button 1</h3>
+                    <label id="tab1NameLbl" for="tab1Name">Shown Name:</label>
+                    <input type="text" class="textInput" id="tab1Name" placeholder="Home">
+                    <label id="tab1UrlLbl" for="tab1Url">URL:</label>
+                    <input type="text" class="textInput" id="tab1Url" placeholder="https://onenote.com/notebooks">
                 </div>
                 <div class="settingsItem">
-                    <h3>Server List:</h3>
-                    <input type="text" class="textInput" id="passLst"
+                    <h3>Button 2</h3>
+                    <label id="tab2NameLbl" for="tab2Name">Shown Name:</label>
+                    <input type="text" class="textInput" id="tab2Name" placeholder="Server List">
+                    <label id="tab2UrlLbl" for="tab1Url">URL:</label>
+                    <input type="text" class="textInput" id="tab2Url"
                         placeholder="https://example.com/specific/notebook/url">
                 </div>
             </div>
@@ -30,16 +37,17 @@
                 <div class="settingsItem">
                     <input type="checkbox" class="checkbox" id="darkMode">Dark Mode for onenote </input>
                     <div class="sliderDiv">
-                    <label id="darkLabel" for="darkMode">Invert level: </label><input type="range" class="slider" id="darkLevel" min="1" max="100" value="60"></input>
+                        <label id="darkLabel" for="darkMode">Invert level: </label><input type="range" class="slider"
+                            id="darkLevel" min="1" max="100" value="60"></input>
                     </div>
-                    <p style="font-size: 9px;">*Expiramental, do not set between 40 or 60 as the page disappears or becomes illegible due to how webkit invert works</p>
+                    <p style="font-size: 9px;">*Expiramental, do not set between 40 or 60 as the page disappears or
+                        becomes illegible due to how webkit invert works</p>
                 </div>
                 <div class="settingsItem">
                     <input type="checkbox" class="checkbox" id="tray">Enable Tray Icon </input>
                     <p style="font-size: 9px;">*Expiramental</p>
                 </div>
             </div>
-            </br>
             <div class="settingsFooter">
                 <button class="saveBtn" id="saveBtn">Save</button>
             </div>
