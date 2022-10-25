@@ -225,6 +225,16 @@ app.on('ready', () => {
             contextIsolation: true,
         }
     })
+
+    //add a listener for if the main window is closed
+    mainWindow.on('closed', () => {
+        mainWindow = null
+        //check if settings window is open and close it if it is
+        if (settingsWindow != null) {
+            settingsWindow.close();
+        }
+    })
+    
     //set the browser view to the main window
     mainWindow.setBrowserView(view)
     resizeBrowserView(false);
