@@ -4,8 +4,8 @@
 
 LinuxNote is an electron based app designed to bring onenote to the linux desktop. Currently supports two url tabs that the adresses can be customized from the settings page. 
 
-![image of app](https://github.com/1Jamie/linuxnote/blob/main/LinuxNote-0.png?raw=true)
-![image of app dark](https://github.com/1Jamie/linuxnote/blob/main/LinuxNote-0-dark.png?raw=true)
+![image of app](https://github.com/1Jamie/linuxnote/blob/main/linuxnote-0.png?raw=true)
+![image of app dark](https://github.com/1Jamie/linuxnote/blob/main/linuxnote-0-dark.png?raw=true)
 
 ## Currently Working
 
