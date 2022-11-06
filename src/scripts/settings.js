@@ -1,4 +1,6 @@
-const { version } = require('store');
+const {
+    version
+} = require('store');
 
 let ipcrenderer = require('electron').ipcRenderer;
 let homepage, passlist, darkMode, tray;
@@ -63,13 +65,17 @@ ipcrenderer.on("settings", (event, arg) => {
     //set the height of settingsBody to the height of the window
     document.getElementById("settingsBody").style.height = window.innerHeight + "px";
     //if dark mode is disabled then disable the dark level slider
-    if (arg.darkMode===false) {
+    if (arg.darkMode === false) {
         document.getElementById("darkLevel").disabled = true;
         //set the bodys class to bodyLight
         document.body.className = "bodyLight";
     } else {
         //set the body to class bodyDark
         document.body.className = "bodyDark";
+        document.getElementById('tab1Url').classList.add('textInputDark');
+        document.getElementById('tab1Name').classList.add('textInputDark');
+        document.getElementById('tab2Url').classList.add('textInputDark');
+        document.getElementById('tab2Name').classList.add('textInputDark');
     }
 
     //for each arg in the settings object set the value of the input to the value of the arg
@@ -97,7 +103,7 @@ ipcrenderer.on("settings", (event, arg) => {
 //add an onclick listener to the dark mode checkbox
 document.getElementById("darkMode").addEventListener("click", () => {
     //if dark mode is disabled then disable the dark level slider
-    if (document.getElementById("darkMode").checked===false) {
+    if (document.getElementById("darkMode").checked === false) {
         document.getElementById("darkLevel").disabled = true;
     } else {
         document.getElementById("darkLevel").disabled = false;

@@ -1,6 +1,6 @@
 {
     "name": "linuxnote",
-    "version": "0.6.01",
+    "version": "0.6.02",
     "description": "Linux Desktop integration of Onenote using Electron.",
     "main": "src/main.js",
     "scripts": {

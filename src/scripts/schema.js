@@ -26,7 +26,7 @@ const schema = {
         type: 'number',
         minimum: 1,
         maximum: 100,
-        default: 90
+        default: 100
     },
     firstRun: {
         type: 'boolean',

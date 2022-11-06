@@ -53,7 +53,13 @@ body {
 
 .textInput {
     width: 95%;
-    height: 24px;
+    height: 26px;
+    border-radius: 10px;
+}
+.textInputDark {
+    background-color: rgb(27, 27, 27);
+    color: #fff;
+    border: 1px solid #fff;
 }
 
 .settingsFooter {

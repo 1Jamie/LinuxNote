@@ -52,7 +52,9 @@ const updateSettings = (values) => {
             //if the key is darkLevel then convert it to a number
             store.set(key, value);
             logmsg('setting ' + key + ' to ' + value);
-            chngCnt++;
+            if (key != 'version' && key != 'tray') {
+                chngCnt++;
+            }
         }
     }
     //check if any of the values were changed
@@ -156,8 +158,10 @@ function openSettings() {
         //settingsWindow.openDevTools()
         //deal with closing the window
         settingsWindow.on('closed', () => {
-            settingsWindow = null
-            mainWindow.webContents.send('settings', 'close')
+            if (mainWindow != null) {
+                settingsWindow = null
+                mainWindow.webContents.send('settings', 'close')
+            }
         })
         //open dev tools if the dev tools is enabled
         if (ndenv === 'dev') {
@@ -234,7 +238,7 @@ app.on('ready', () => {
             settingsWindow.close();
         }
     })
-    
+
     //set the browser view to the main window
     mainWindow.setBrowserView(view)
     resizeBrowserView(false);
@@ -266,7 +270,7 @@ app.on('ready', () => {
         let tab1Base = tab1Hostname.split('.').slice(-2).join('.');
         let tab2Base = tab2Hostname.split('.').slice(-2).join('.');
         //see if the url is the same hostname as the tab1 or tab2 url
-        if (url.includes(tab1Base)||url.includes(tab2Base)||url.includes('localhost')||url.includes('onenote.com')||url.includes('sharepoint.com')) {
+        if (url.includes(tab1Base) || url.includes(tab2Base) || url.includes('localhost') || url.includes('onenote.com') || url.includes('sharepoint.com')) {
             //see if the dark mode is enabled
             if (store.get('darkMode') === true) {
                 let darkLevel = store.get('darkLevel');
@@ -288,7 +292,9 @@ app.on('ready', () => {
 
 //if any sub windows open see if they are external links and open them in the default browser
 app.on('web-contents-created', (event, contents) => {
-    contents.setWindowOpenHandler(({ url }) => {
+    contents.setWindowOpenHandler(({
+        url
+    }) => {
         //get the urls and split them into base names
         let tab1Base = new URL(store.get('tab1Url')).hostname.split('.').slice(-2).join('.');
         let tab2Base = new URL(store.get('tab2Url')).hostname.split('.').slice(-2).join('.');
@@ -299,7 +305,9 @@ app.on('web-contents-created', (event, contents) => {
         } else {
             //open it in the default browser
             shell.openExternal(url)
-            return { action: 'deny' }
+            return {
+                action: 'deny'
+            }
         }
     })
 })
