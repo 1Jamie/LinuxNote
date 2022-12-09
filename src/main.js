@@ -196,7 +196,7 @@ function resizeBrowserView(minmax) {
                 height: mainWindow.getBounds().height - 35
             })
             clearTimeout(timeout);
-        }, 70);
+        }, 10);
     } else {
         //if its not a min/max resize then just resize the browser view
         view.setBounds({
@@ -252,6 +252,12 @@ app.on('ready', () => {
     mainWindow.on('resize', () => {
         resizeBrowserView(false)
     })
+    //a listener for if its tiled (really just watch for it being moved and not maximized)
+    mainWindow.on('move', () => {
+        if (mainWindow.isMaximized() === false) {
+            resizeBrowserView(true);
+        }
+    })
     //get the lastOpen value from the store
     let lastOpen = store.get('lastOpen');
     //check if the lastOpen value is set and if it is then load it, if not then load tab1Url
@@ -274,7 +280,7 @@ app.on('ready', () => {
             //see if the dark mode is enabled
             if (store.get('darkMode') === true) {
                 let darkLevel = store.get('darkLevel');
-                //inject the css invert of 60% into the page and all text to white
+                //inject the css invert of specified amount into the page and all text to white
                 view.webContents.insertCSS(`html {-webkit-filter: invert(${darkLevel}%); filter: invert(${darkLevel}%); -webkit-transition: all 0.5s ease; transition: all 0.5s ease; color: white;}`)
             }
         } else {
