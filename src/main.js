@@ -239,6 +239,12 @@ app.on('ready', () => {
         }
     })
 
+    app.on('activate', () => {
+        // On macOS it's common to re-create a window in the app when the
+        // dock icon is clicked and there are no other windows open.
+        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    })
+
     //set the browser view to the main window
     mainWindow.setBrowserView(view)
     resizeBrowserView(false);
@@ -399,6 +405,10 @@ app.on('window-all-closed', () => {
     store.set('lastOpen', view.webContents.getURL())
     logmsg('lastOpen: ' + store.get('lastOpen'))
     if (process.platform !== 'darwin') {
+        app.quit()
+    }
+    //if all windows are closed then quit the app
+    if (mainWindow === null) {
         app.quit()
     }
 })
