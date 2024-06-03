@@ -5,20 +5,23 @@
     "main": "src/main.js",
     "scripts": {
         "start": "electron-forge start",
-        "start-dev": "electron-forge start ",
+        "start-dev": "NODE_ENV='dev'; electron-forge start",
         "package": "electron-forge package",
         "make": "electron-forge make",
-        "make-win": "electron-forge make -p win32"
+        "make-win": "electron-forge make -p win32",
+        "make-mac": "electron-forge make -p mac"
     },
     "author": "Jamie Charlton",
     "license": "N/A",
     "devDependencies": {
-        "@electron-forge/cli": "^6.0.0-beta.66",
+        "@electron-forge/cli": "^6.4.2",
         "@electron-forge/maker-deb": "^6.0.0-beta.66",
         "@electron-forge/maker-rpm": "^6.0.0-beta.66",
         "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
+        "@electron-forge/maker-dmg": "7.4.0",
         "@electron-forge/maker-zip": "^6.0.0-beta.66",
-        "electron": "^21.0.1"
+        "electron": "^21.0.1",
+        "electron-prebuilt-compile": "8.2.0"
     },
     "dependencies": {
         "@electron/remote": "^2.0.8",
@@ -68,6 +71,16 @@
                 {
                     "name": "@electron-forge/maker-rpm",
                     "config": {
+                        "maintainer": "Jamie Charlton",
+                        "homepage": "https://github.com/1jamie/linuxnote",
+                        "category": "Office",
+                        "icon": "linuxnote-icon.png"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-dmg",
+                    "config": {
+                        "format": "ULFO",
                         "maintainer": "Jamie Charlton",
                         "homepage": "https://github.com/1jamie/linuxnote",
                         "category": "Office",
