@@ -111,7 +111,7 @@ async function createTray() {
             click: () => {
                 app.quit();
             }
-        }, ])
+        },])
         tray.setToolTip('LinuxNote')
         tray.setContextMenu(contextMenu)
     }
@@ -304,9 +304,7 @@ app.on('ready', () => {
 
 //if any sub windows open see if they are external links and open them in the default browser
 app.on('web-contents-created', (event, contents) => {
-    contents.setWindowOpenHandler(({
-        url
-    }) => {
+    contents.on('will-navigate', (event, url) => {
         //get the urls and split them into base names
         let tab1Base = new URL(store.get('tab1Url')).hostname.split('.').slice(-2).join('.');
         let tab2Base = new URL(store.get('tab2Url')).hostname.split('.').slice(-2).join('.');
@@ -316,10 +314,14 @@ app.on('web-contents-created', (event, contents) => {
             view.webContents.loadURL(url)
         } else {
             //open it in the default browser
-            shell.openExternal(url)
-            return {
-                action: 'deny'
+            if (process.platform === 'darwin') {
+                //workaround for macos
+                shell.openExternal(url)
+            } else {
+                //standard way
+                shell.openExternal(url)
             }
+            event.preventDefault()
         }
     })
 })
