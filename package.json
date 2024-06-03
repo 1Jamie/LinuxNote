@@ -9,7 +9,7 @@
         "package": "electron-forge package",
         "make": "electron-forge make",
         "make-win": "electron-forge make -p win32",
-        "make-mac": "electron-forge make -p mac"
+        "make-mac": "electron-forge make -p darwin"
     },
     "author": "Jamie Charlton",
     "license": "N/A",
