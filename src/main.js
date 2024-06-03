@@ -386,7 +386,6 @@ app.on('window-all-closed', () => {
         app.quit()
     }
     //if all windows are closed then quit the app
-    if (mainWindow === null) {
-        app.quit()
-    }
+    app.quit()
+
 })
