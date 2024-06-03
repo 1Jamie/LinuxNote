@@ -302,28 +302,6 @@ app.on('ready', () => {
     }
 })
 
-//if any sub windows open see if they are external links and open them in the default browser
-app.on('web-contents-created', (event, contents) => {
-    contents.setWindowOpenHandler(({
-        url
-    }) => {
-        //get the urls and split them into base names
-        let tab1Base = new URL(store.get('tab1Url')).hostname.split('.').slice(-2).join('.');
-        let tab2Base = new URL(store.get('tab2Url')).hostname.split('.').slice(-2).join('.');
-        //check if its a url for tab1 or tab2
-        if (url.includes(tab1Base) || url.includes(tab2Base) || url.includes('sharepoint.com') || url.includes('onenote.com')) {
-            //just navigate to the url
-            view.webContents.loadURL(url)
-        } else {
-            //open it in the default browser
-            shell.openExternal(url)
-            return {
-                action: 'deny'
-            }
-        }
-    })
-})
-
 //after the window is loaded create a listener for the ipcrenderer
 ipcMain.on('topbar', (event, arg) => {
     //switch to deal with the different buttons
